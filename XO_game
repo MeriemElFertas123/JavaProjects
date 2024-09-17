@@ -1,0 +1,350 @@
+package Jeu_XO;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+
+public class XoGame extends JFrame implements  ActionListener{
+    JPanel notrePanneau;
+    int nbCasesX = 3;
+    int nbCasesY = 3;
+    Color couleurZone = Color.pink;
+    JButton b1,b2,b3,b4,b5,b6,b7,b8,b9;
+    char JoueurActuel = 'X'; 
+
+    public XoGame() {
+        this.setTitle("XO game");
+        this.setSize(500, 500);
+        this.setBackground(Color.blue);
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        notrePanneau = new JPanel(new GridLayout(3,3,0,0));
+        b1= new JButton(""); b1.addActionListener(this);
+        b2= new JButton(""); b2.addActionListener(this);
+        b3= new JButton(""); b3.addActionListener(this);
+        b4= new JButton(""); b4.addActionListener(this);
+        b5= new JButton(""); b5.addActionListener(this);
+        b6= new JButton(""); b6.addActionListener(this);
+        b7= new JButton(""); b7.addActionListener(this);
+        b8= new JButton(""); b8.addActionListener(this);
+        b9= new JButton(""); b9.addActionListener(this);
+        
+        //rendre les boutons plats
+        b1.setContentAreaFilled(false);
+        b2.setContentAreaFilled(false);
+        b3.setContentAreaFilled(false);
+        b4.setContentAreaFilled(false);
+        b5.setContentAreaFilled(false);
+        b6.setContentAreaFilled(false);
+        b7.setContentAreaFilled(false);
+        b8.setContentAreaFilled(false);
+        b9.setContentAreaFilled(false);
+        
+        // Définir la police personnalisée pour la lettre à l'interieur de chaque bouton
+        Font buttonFont = new Font("Arial", Font.CENTER_BASELINE, 60); 
+        b1.setFont(buttonFont);
+        b2.setFont(buttonFont);
+        b3.setFont(buttonFont);
+        b4.setFont(buttonFont);
+        b5.setFont(buttonFont);
+        b6.setFont(buttonFont);
+        b7.setFont(buttonFont);
+        b8.setFont(buttonFont);
+        b9.setFont(buttonFont);
+        
+        
+        //colorer la bourdure de chaque buttons en rose et agrandir sa largeur
+        b1.setBorder(new LineBorder(Color.pink,3));
+        b2.setBorder(new LineBorder(Color.pink,3));
+        b3.setBorder(new LineBorder(Color.pink,3));
+        b4.setBorder(new LineBorder(Color.pink,3));
+        b5.setBorder(new LineBorder(Color.pink,3));
+        b6.setBorder(new LineBorder(Color.pink,3));
+        b7.setBorder(new LineBorder(Color.pink,3));
+        b8.setBorder(new LineBorder(Color.pink,3));
+        b9.setBorder(new LineBorder(Color.pink,3));
+        
+        
+       notrePanneau.setBackground(Color.white);
+        
+        notrePanneau.add(b1);
+        notrePanneau.add(b2);
+        notrePanneau.add(b3);
+        notrePanneau.add(b4);
+        notrePanneau.add(b5);
+        notrePanneau.add(b6);
+        notrePanneau.add(b7);
+        notrePanneau.add(b8);
+        notrePanneau.add(b9);
+        
+        add(notrePanneau);
+        this.setVisible(true);
+    }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JButton BCliquee = (JButton) e.getSource();
+            BCliquee.setFocusPainted(false); // Désactive le contour de focus
+            if (BCliquee.getText().equals("")) { 
+            	BCliquee.setText(Character.toString(JoueurActuel));
+            	 if(BCliquee.getText().equals("X")) {
+                 	BCliquee.setForeground(Color.blue);
+                 }else if(BCliquee.getText().equals("O")){ 
+                 	BCliquee.setForeground(Color.red);
+                 }
+                if (VerifierVictoire()) {
+                    JOptionPane.showMessageDialog(null, JoueurActuel + " a gagné !!!!!!!");
+                  
+                } else {
+                	JoueurActuel = (JoueurActuel == 'X') ? 'O' : 'X'; 
+                    if(BCliquee.getText().equals("X")) {
+                    	BCliquee.setForeground(Color.blue);//colorer les X en blue
+                    }else if(BCliquee.getText().equals("O")){ 
+                    	BCliquee.setForeground(Color.red);//colorer les  en rouge
+                    }
+                    
+                }
+                
+            }
+            
+        }
+    
+    // Fonction pour vérifier s'il y a une victoire
+    private boolean VerifierVictoire() {
+        String[] contenuCase = new String[9];
+        contenuCase[0] = b1.getText();
+        contenuCase[1] = b2.getText();
+        contenuCase[2] = b3.getText();
+        contenuCase[3] = b4.getText();
+        contenuCase[4] = b5.getText();
+        contenuCase[5] = b6.getText();
+        contenuCase[6] = b7.getText();
+        contenuCase[7] = b8.getText();
+        contenuCase[8] = b9.getText();
+        
+        // Vérification des lignes
+        for (int i = 0; i < 9; i += 3) {
+            if (! contenuCase[i].equals("") &&  contenuCase[i].equals( contenuCase[i + 1]) &&  contenuCase[i].equals( contenuCase[i + 2])) {
+            	ColorerCellulesGagnantes(i, i + 1, i + 2);
+                return true;
+            }
+        }
+        
+        // Vérification des colonnes
+        for (int i = 0; i < 3; i++) {
+            if (! contenuCase[i].equals("") &&  contenuCase[i].equals( contenuCase[i + 3]) && contenuCase[i].equals(contenuCase[i + 6])) {
+            	ColorerCellulesGagnantes(i, i + 3, i + 6);
+                return true;
+            }
+        }
+        
+        // Vérification des diagonales
+        if (!contenuCase[0].equals("") && contenuCase[0].equals(contenuCase[4]) && contenuCase[0].equals(contenuCase[8])) {
+        	ColorerCellulesGagnantes(0, 4, 8);
+            return true;
+        }
+        if (!contenuCase[2].equals("") && contenuCase[2].equals(contenuCase[4]) && contenuCase[2].equals(contenuCase[6])) {
+        	ColorerCellulesGagnantes(2, 4, 6);
+            return true;
+        }
+        
+        return false;
+    }
+    
+    // Fonction pour colorer les cellules gagnantes
+    private void ColorerCellulesGagnantes(int... indexes) {
+        for (int index : indexes) {
+            switch (index) {
+                case 0: b1.setContentAreaFilled(true);b1.setBackground(Color.GREEN); break;
+                case 1: b2.setContentAreaFilled(true);b2.setBackground(Color.GREEN); break;
+                case 2: b3.setContentAreaFilled(true);b3.setBackground(Color.GREEN); break;
+                case 3: b4.setContentAreaFilled(true);b4.setBackground(Color.GREEN); break;
+                case 4: b5.setContentAreaFilled(true);b5.setBackground(Color.GREEN); break;
+                case 5: b6.setContentAreaFilled(true);b6.setBackground(Color.GREEN); break;
+                case 6: b7.setContentAreaFilled(true);b7.setBackground(Color.GREEN); break;
+                case 7: b8.setContentAreaFilled(true);b8.setBackground(Color.GREEN); break;
+                case 8: b9.setContentAreaFilled(true);b9.setBackground(Color.GREEN); break;
+            }
+        }
+    }
+ 
+    public static void main(String[] args) {
+        new XoGame();
+    }
+}
+package Jeu_XO;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+
+public class XoGame extends JFrame implements  ActionListener{
+    JPanel notrePanneau;
+    int nbCasesX = 3;
+    int nbCasesY = 3;
+    Color couleurZone = Color.pink;
+    JButton b1,b2,b3,b4,b5,b6,b7,b8,b9;
+    char JoueurActuel = 'X'; 
+
+    public XoGame() {
+        this.setTitle("XO game");
+        this.setSize(500, 500);
+        this.setBackground(Color.blue);
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        notrePanneau = new JPanel(new GridLayout(3,3,0,0));
+        b1= new JButton(""); b1.addActionListener(this);
+        b2= new JButton(""); b2.addActionListener(this);
+        b3= new JButton(""); b3.addActionListener(this);
+        b4= new JButton(""); b4.addActionListener(this);
+        b5= new JButton(""); b5.addActionListener(this);
+        b6= new JButton(""); b6.addActionListener(this);
+        b7= new JButton(""); b7.addActionListener(this);
+        b8= new JButton(""); b8.addActionListener(this);
+        b9= new JButton(""); b9.addActionListener(this);
+        
+        //rendre les boutons plats
+        b1.setContentAreaFilled(false);
+        b2.setContentAreaFilled(false);
+        b3.setContentAreaFilled(false);
+        b4.setContentAreaFilled(false);
+        b5.setContentAreaFilled(false);
+        b6.setContentAreaFilled(false);
+        b7.setContentAreaFilled(false);
+        b8.setContentAreaFilled(false);
+        b9.setContentAreaFilled(false);
+        
+        // Définir la police personnalisée pour la lettre à l'interieur de chaque bouton
+        Font buttonFont = new Font("Arial", Font.CENTER_BASELINE, 60); 
+        b1.setFont(buttonFont);
+        b2.setFont(buttonFont);
+        b3.setFont(buttonFont);
+        b4.setFont(buttonFont);
+        b5.setFont(buttonFont);
+        b6.setFont(buttonFont);
+        b7.setFont(buttonFont);
+        b8.setFont(buttonFont);
+        b9.setFont(buttonFont);
+        
+        
+        //colorer la bourdure de chaque buttons en rose et agrandir sa largeur
+        b1.setBorder(new LineBorder(Color.pink,3));
+        b2.setBorder(new LineBorder(Color.pink,3));
+        b3.setBorder(new LineBorder(Color.pink,3));
+        b4.setBorder(new LineBorder(Color.pink,3));
+        b5.setBorder(new LineBorder(Color.pink,3));
+        b6.setBorder(new LineBorder(Color.pink,3));
+        b7.setBorder(new LineBorder(Color.pink,3));
+        b8.setBorder(new LineBorder(Color.pink,3));
+        b9.setBorder(new LineBorder(Color.pink,3));
+        
+        
+       notrePanneau.setBackground(Color.white);
+        
+        notrePanneau.add(b1);
+        notrePanneau.add(b2);
+        notrePanneau.add(b3);
+        notrePanneau.add(b4);
+        notrePanneau.add(b5);
+        notrePanneau.add(b6);
+        notrePanneau.add(b7);
+        notrePanneau.add(b8);
+        notrePanneau.add(b9);
+        
+        add(notrePanneau);
+        this.setVisible(true);
+    }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JButton BCliquee = (JButton) e.getSource();
+            BCliquee.setFocusPainted(false); // Désactive le contour de focus
+            if (BCliquee.getText().equals("")) { 
+            	BCliquee.setText(Character.toString(JoueurActuel));
+            	 if(BCliquee.getText().equals("X")) {
+                 	BCliquee.setForeground(Color.blue);
+                 }else if(BCliquee.getText().equals("O")){ 
+                 	BCliquee.setForeground(Color.red);
+                 }
+                if (VerifierVictoire()) {
+                    JOptionPane.showMessageDialog(null, JoueurActuel + " a gagné !!!!!!!");
+                  
+                } else {
+                	JoueurActuel = (JoueurActuel == 'X') ? 'O' : 'X'; 
+                    if(BCliquee.getText().equals("X")) {
+                    	BCliquee.setForeground(Color.blue);//colorer les X en blue
+                    }else if(BCliquee.getText().equals("O")){ 
+                    	BCliquee.setForeground(Color.red);//colorer les  en rouge
+                    }
+                    
+                }
+                
+            }
+            
+        }
+    
+    // Fonction pour vérifier s'il y a une victoire
+    private boolean VerifierVictoire() {
+        String[] contenuCase = new String[9];
+        contenuCase[0] = b1.getText();
+        contenuCase[1] = b2.getText();
+        contenuCase[2] = b3.getText();
+        contenuCase[3] = b4.getText();
+        contenuCase[4] = b5.getText();
+        contenuCase[5] = b6.getText();
+        contenuCase[6] = b7.getText();
+        contenuCase[7] = b8.getText();
+        contenuCase[8] = b9.getText();
+        
+        // Vérification des lignes
+        for (int i = 0; i < 9; i += 3) {
+            if (! contenuCase[i].equals("") &&  contenuCase[i].equals( contenuCase[i + 1]) &&  contenuCase[i].equals( contenuCase[i + 2])) {
+            	ColorerCellulesGagnantes(i, i + 1, i + 2);
+                return true;
+            }
+        }
+        
+        // Vérification des colonnes
+        for (int i = 0; i < 3; i++) {
+            if (! contenuCase[i].equals("") &&  contenuCase[i].equals( contenuCase[i + 3]) && contenuCase[i].equals(contenuCase[i + 6])) {
+            	ColorerCellulesGagnantes(i, i + 3, i + 6);
+                return true;
+            }
+        }
+        
+        // Vérification des diagonales
+        if (!contenuCase[0].equals("") && contenuCase[0].equals(contenuCase[4]) && contenuCase[0].equals(contenuCase[8])) {
+        	ColorerCellulesGagnantes(0, 4, 8);
+            return true;
+        }
+        if (!contenuCase[2].equals("") && contenuCase[2].equals(contenuCase[4]) && contenuCase[2].equals(contenuCase[6])) {
+        	ColorerCellulesGagnantes(2, 4, 6);
+            return true;
+        }
+        
+        return false;
+    }
+    
+    // Fonction pour colorer les cellules gagnantes
+    private void ColorerCellulesGagnantes(int... indexes) {
+        for (int index : indexes) {
+            switch (index) {
+                case 0: b1.setContentAreaFilled(true);b1.setBackground(Color.GREEN); break;
+                case 1: b2.setContentAreaFilled(true);b2.setBackground(Color.GREEN); break;
+                case 2: b3.setContentAreaFilled(true);b3.setBackground(Color.GREEN); break;
+                case 3: b4.setContentAreaFilled(true);b4.setBackground(Color.GREEN); break;
+                case 4: b5.setContentAreaFilled(true);b5.setBackground(Color.GREEN); break;
+                case 5: b6.setContentAreaFilled(true);b6.setBackground(Color.GREEN); break;
+                case 6: b7.setContentAreaFilled(true);b7.setBackground(Color.GREEN); break;
+                case 7: b8.setContentAreaFilled(true);b8.setBackground(Color.GREEN); break;
+                case 8: b9.setContentAreaFilled(true);b9.setBackground(Color.GREEN); break;
+            }
+        }
+    }
+ 
+    public static void main(String[] args) {
+        new XoGame();
+    }
+}
